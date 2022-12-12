@@ -4,30 +4,43 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
+   
+
+    [SerializeField] Rigidbody2D rb;
+    [SerializeField] Transform groundCheck;
+    [SerializeField] LayerMask groundLayer;
+
+    private bool doubleJump;
+    private Animator animator;
     private float horizontal;
     private float speed = 8f;
     private float jumpingPower = 16f;
     private bool isFacingRight = true;
 
-    private bool doubleJump;
+    private void Start()
+    {
+        animator = GetComponent<Animator>();
+    }
 
-    [SerializeField] private Rigidbody2D rb;
-    [SerializeField] private Transform groundCheck;
-    [SerializeField] private LayerMask groundLayer;
 
     private void Update()
     {
         horizontal = Input.GetAxisRaw("Horizontal");
+        animator.SetFloat("Speed", Mathf.Abs(horizontal));
 
-        if (IsGrounded() && !Input.GetButton("Jump"))
+        bool grounded = IsGrounded();
+
+        if (grounded && !Input.GetButton("Jump"))
         {
             doubleJump = false;
+            animator.SetBool("IsJumping", false);
         }
 
         if (Input.GetButtonDown("Jump"))
         {
-            if (IsGrounded() || doubleJump)
+            if (grounded || doubleJump)
             {
+                animator.SetBool("IsJumping", true);
                 rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
 
                 doubleJump = !doubleJump;
