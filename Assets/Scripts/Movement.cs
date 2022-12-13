@@ -11,6 +11,7 @@ public class Movement : MonoBehaviour
     [SerializeField] Rigidbody2D rb;
     [SerializeField] Transform groundCheck;
     [SerializeField] LayerMask groundLayer;
+    [SerializeField] bool canDoubleJump = true;
 
     private bool doubleJump;
     private Animator animator;
@@ -19,11 +20,13 @@ public class Movement : MonoBehaviour
     private float jumpingPower = 16f;
     private bool isFacingRight = true;
     private float halfWidth;
+    private bool OnButton;
 
     private void Start()
     {
         animator = GetComponent<Animator>();
         halfWidth = GetComponent<SpriteRenderer>().bounds.size.x / 2f;
+        OnButton = false;
     }
 
 
@@ -34,7 +37,7 @@ public class Movement : MonoBehaviour
 
         bool grounded = IsGrounded();
 
-        if (grounded && !Input.GetButton("Jump"))
+        if ((grounded || OnButton) && !Input.GetButton("Jump"))
         {
             doubleJump = false;
             animator.SetBool("IsJumping", false);
@@ -42,12 +45,13 @@ public class Movement : MonoBehaviour
 
         if (Input.GetButtonDown("Jump"))
         {
-            if (grounded || doubleJump)
+            if (grounded || doubleJump || OnButton)
             {
                 animator.SetBool("IsJumping", true);
                 rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
 
-                doubleJump = !doubleJump;
+                if (canDoubleJump)
+                    doubleJump = !doubleJump;
             }
         }
 
@@ -79,5 +83,27 @@ public class Movement : MonoBehaviour
             localScale.x *= -1f;
             transform.localScale = localScale;
         }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        FixButton(collision);
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        FixButton(collision);
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        FixButton(collision, true);
+    }
+
+    private void FixButton(Collision2D collision, bool exit = false)
+    {
+        OnButton = (collision.gameObject.name == "Butt" ||
+            collision.gameObject.name == "ButtSquare")
+            && !exit;
     }
 }
