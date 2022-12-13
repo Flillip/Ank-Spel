@@ -15,7 +15,7 @@ public class MumieMovement : MonoBehaviour
 
     public void Activate()
     {
-        this.enabled = true;
+        this.gameObject.SetActive(true);
         active = true;
     }
 
