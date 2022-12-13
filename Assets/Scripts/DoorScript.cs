@@ -45,7 +45,7 @@ public class DoorScript : MonoBehaviour
         {
             if (buttonReleased == true)
                 break;
-            transform.position += new Vector3(0, MoveSpeed, 0);
+            transform.position += new Vector3(0, MoveSpeed * Time.deltaTime, 0);
             yield return null;
         }
 
@@ -60,7 +60,7 @@ public class DoorScript : MonoBehaviour
 
         while (transform.position.y > originalPos.y)
         {
-            transform.position -= new Vector3(0, MoveSpeed, 0);
+            transform.position -= new Vector3(0, MoveSpeed * Time.deltaTime, 0);
             yield return null;
         }
 

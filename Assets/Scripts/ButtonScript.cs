@@ -51,7 +51,7 @@ public class ButtonScript : MonoBehaviour
             return;
         }
 
-        transform.localPosition -= new Vector3(0, MoveSpeed, 0);
+        transform.localPosition -= new Vector3(0, MoveSpeed * Time.deltaTime, 0);
     }
 
     private void OnCollisionExit2D(Collision2D collision)
@@ -67,7 +67,7 @@ public class ButtonScript : MonoBehaviour
     {
         while (transform.position.y < originalPos.y)
         {
-            transform.localPosition += new Vector3(0, MoveSpeed, 0);
+            transform.localPosition += new Vector3(0, MoveSpeed * Time.deltaTime, 0);
             yield return null;
         }
 

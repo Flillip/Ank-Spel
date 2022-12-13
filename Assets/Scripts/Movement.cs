@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Burst.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Movement : MonoBehaviour
@@ -16,10 +18,12 @@ public class Movement : MonoBehaviour
     private float speed = 8f;
     private float jumpingPower = 16f;
     private bool isFacingRight = true;
+    private float halfWidth;
 
     private void Start()
     {
         animator = GetComponent<Animator>();
+        halfWidth = GetComponent<SpriteRenderer>().bounds.size.x / 2f;
     }
 
 
@@ -62,8 +66,8 @@ public class Movement : MonoBehaviour
 
     private bool IsGrounded()
     {
-        return Physics2D.Raycast(groundCheck.position - new Vector3(transform.localScale.x / 2f, 0), Vector2.down, transform.localScale.y / 8f, groundLayer) ||
-            Physics2D.Raycast(groundCheck.position + new Vector3(transform.localScale.x / 2f, 0), Vector2.down, transform.localScale.y / 8f, groundLayer);
+        return Physics2D.Raycast(groundCheck.position - new Vector3(halfWidth - .2f, 0), Vector2.down, transform.localScale.y / 8f, groundLayer) ||
+            Physics2D.Raycast(groundCheck.position + new Vector3(halfWidth - .2f, 0), Vector2.down, transform.localScale.y / 8f, groundLayer);
     }
 
     private void Flip()
