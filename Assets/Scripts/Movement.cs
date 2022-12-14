@@ -8,10 +8,13 @@ public class Movement : MonoBehaviour
 {
    
 
-    [SerializeField] Rigidbody2D rb;
-    [SerializeField] Transform groundCheck;
-    [SerializeField] LayerMask groundLayer;
-    [SerializeField] bool canDoubleJump = true;
+    [SerializeField] Rigidbody2D Rb;
+    [SerializeField] Transform GroundCheck;
+    [SerializeField] LayerMask GroundLayer;
+    [SerializeField] bool CanDoubleJump = true;
+    [SerializeField] Camera Camera;
+    [SerializeField] float CameraMovementOffset;
+    [SerializeField] float PlayerMovementOffsetOnCameraMove = 2;
 
     private bool doubleJump;
     private Animator animator;
@@ -20,24 +23,28 @@ public class Movement : MonoBehaviour
     private float jumpingPower = 16f;
     private bool isFacingRight = true;
     private float halfWidth;
-    private bool OnButton;
+    private bool onButton;
+    private bool canMoveCamera;
 
     private void Start()
     {
         animator = GetComponent<Animator>();
         halfWidth = GetComponent<SpriteRenderer>().bounds.size.x / 2f;
-        OnButton = false;
+        onButton = false;
+        animator.SetBool("IsJumping", true);
+        canMoveCamera = true;
     }
 
 
     private void Update()
     {
+        canMoveCamera = true;
         horizontal = Input.GetAxisRaw("Horizontal");
         animator.SetFloat("Speed", Mathf.Abs(horizontal));
 
         bool grounded = IsGrounded();
 
-        if ((grounded || OnButton) && !Input.GetButton("Jump"))
+        if ((grounded || onButton) && !Input.GetButton("Jump"))
         {
             doubleJump = false;
             animator.SetBool("IsJumping", false);
@@ -45,19 +52,19 @@ public class Movement : MonoBehaviour
 
         if (Input.GetButtonDown("Jump"))
         {
-            if (grounded || doubleJump || OnButton)
+            if (grounded || doubleJump || onButton)
             {
                 animator.SetBool("IsJumping", true);
-                rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
+                Rb.velocity = new Vector2(Rb.velocity.x, jumpingPower);
 
-                if (canDoubleJump)
+                if (CanDoubleJump)
                     doubleJump = !doubleJump;
             }
         }
 
-        if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f)
+        if (Input.GetButtonUp("Jump") && Rb.velocity.y > 0f)
         {
-            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
+            Rb.velocity = new Vector2(Rb.velocity.x, Rb.velocity.y * 0.5f);
         }
 
         Flip();
@@ -65,13 +72,13 @@ public class Movement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
+        Rb.velocity = new Vector2(horizontal * speed, Rb.velocity.y);
     }
 
     private bool IsGrounded()
     {
-        return Physics2D.Raycast(groundCheck.position - new Vector3(halfWidth - .2f, 0), Vector2.down, transform.localScale.y / 8f, groundLayer) ||
-            Physics2D.Raycast(groundCheck.position + new Vector3(halfWidth - .2f, 0), Vector2.down, transform.localScale.y / 8f, groundLayer);
+        return Physics2D.Raycast(GroundCheck.position - new Vector3(halfWidth - .2f, 0), Vector2.down, transform.localScale.y / 8f, GroundLayer) ||
+            Physics2D.Raycast(GroundCheck.position + new Vector3(halfWidth - .2f, 0), Vector2.down, transform.localScale.y / 8f, GroundLayer);
     }
 
     private void Flip()
@@ -99,10 +106,45 @@ public class Movement : MonoBehaviour
     {
         FixButton(collision, true);
     }
+    
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.name == "Water")
+        {
+            animator.SetBool("IsJumping", false);
+            animator.SetBool("IsSwimming", true);
+        }
+
+
+        if (canMoveCamera)
+        {
+            if (collision.gameObject.name == "CameraColliderLeft")
+            {
+                Camera.transform.position += new Vector3(-CameraMovementOffset, 0);
+                transform.position += new Vector3(-2, 0);
+            }
+            
+            else if (collision.gameObject.name == "CameraColliderRight")
+            {
+                transform.position += new Vector3(PlayerMovementOffsetOnCameraMove, 0);
+                Camera.transform.position += new Vector3(CameraMovementOffset, 0);
+            }
+
+            canMoveCamera = false;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.name == "Water")
+        {
+            animator.SetBool("IsSwimming", false);
+        }
+    }
 
     private void FixButton(Collision2D collision, bool exit = false)
     {
-        OnButton = (collision.gameObject.name == "Butt" ||
+        onButton = (collision.gameObject.name == "Butt" ||
             collision.gameObject.name == "ButtSquare")
             && !exit;
     }

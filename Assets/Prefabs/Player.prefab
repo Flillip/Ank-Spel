@@ -186,12 +186,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01377df33f088c54594375c5de3a8896, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rb: {fileID: 8929652401931486884}
-  groundCheck: {fileID: 8929652400608737405}
-  groundLayer:
+  Rb: {fileID: 8929652401931486884}
+  GroundCheck: {fileID: 8929652400608737405}
+  GroundLayer:
     serializedVersion: 2
     m_Bits: 8
-  canDoubleJump: 1
+  CanDoubleJump: 1
+  Camera: {fileID: 7749403287552993035, guid: b42160b80c039b544a7fd343a00dd57b, type: 3}
+  CameraMovementOffset: 35.5
 --- !u!95 &8929652401931486883
 Animator:
   serializedVersion: 4
