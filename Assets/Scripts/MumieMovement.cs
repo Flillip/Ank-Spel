@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class MumieMovement : MonoBehaviour
@@ -12,6 +13,7 @@ public class MumieMovement : MonoBehaviour
     private float halfWidth;
     private float dir;
     private bool active = false;
+    private Transform initalTransform;
 
     public void Activate()
     {
@@ -19,10 +21,19 @@ public class MumieMovement : MonoBehaviour
         active = true;
     }
 
+    public void Restart()
+    {
+        gameObject.SetActive(false);
+        active = false;
+        if (initalTransform != null)
+            transform.position = initalTransform.position;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
         dir = 1;
+        initalTransform = transform;
     }
 
     // Update is called once per frame
@@ -47,17 +58,21 @@ public class MumieMovement : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        Debug.Log(collision.gameObject.name);
+        if (collision.gameObject.name == "Tilemap")
+            return;
+
         dir *= -1;
         transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
     }
 
     private bool RayLeft()
     {
-        return Physics2D.Raycast(groundCheck.position + new Vector3(halfWidth - .2f, 0), Vector2.down, transform.localScale.y / 8f, groundLayer);
+        return Physics2D.Raycast(groundCheck.position + new Vector3(halfWidth - .2f, 0), Vector2.down, transform.localScale.y / 2f, groundLayer);
     }
 
     private bool RayRight()
     {
-        return Physics2D.Raycast(groundCheck.position - new Vector3(halfWidth - .2f, 0), Vector2.down, transform.localScale.y / 8f, groundLayer);
+        return Physics2D.Raycast(groundCheck.position - new Vector3(halfWidth - .2f, 0), Vector2.down, transform.localScale.y / 2f, groundLayer);
     }
 }

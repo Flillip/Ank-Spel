@@ -1,14 +1,8 @@
 using System.Collections;
-using System.Collections.Generic;
-using Unity.Burst.CompilerServices;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class Movement : MonoBehaviour
 {
-   
-
     [SerializeField] Rigidbody2D Rb;
     [SerializeField] Transform GroundCheck;
     [SerializeField] LayerMask GroundLayer;
@@ -29,6 +23,8 @@ public class Movement : MonoBehaviour
     private bool onButton;
     private bool canMoveCamera;
     private bool canMove;
+    private bool canTakeDamage;
+    private bool justReset;
 
     private void Start()
     {
@@ -38,6 +34,8 @@ public class Movement : MonoBehaviour
         animator.SetBool("IsJumping", true);
         canMoveCamera = true;
         canMove = true;
+        canTakeDamage = true;
+        justReset = false;
     }
 
 
@@ -77,8 +75,13 @@ public class Movement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(canMove)
+        if(canMove && !justReset)
             Rb.velocity = new Vector2(horizontal * speed, Rb.velocity.y);
+        else if (justReset)
+        {
+            Rb.velocity = Vector3.zero;
+            Rb.angularVelocity = 0;
+        }
     }
 
     private bool IsGrounded()
@@ -102,10 +105,20 @@ public class Movement : MonoBehaviour
     {
         FixButton(collision);
 
-        if (collision.gameObject.name == "Mumie")
+        if (!canTakeDamage)
+            return;
+
+        if (collision.gameObject.name == "Mumie" || collision.gameObject.name == "Spikes")
         {
+            Debug.Log("OUCHIE WOUCHIE THAT HURTS" + canTakeDamage);
             Health.Damage(1);
+            if (Health.Health <= 0)
+                return;
+
             ApplyKnockback(collision);
+            StartCoroutine(DisableDamage(0.5f));
+            animator.Play("Base Layer.Player_Hurt");
+
         }
     }
 
@@ -115,6 +128,14 @@ public class Movement : MonoBehaviour
         Vector2 knockback = dif.normalized * KnockbackForce;
         Rb.AddForce(knockback, ForceMode2D.Impulse);
         StartCoroutine(DisableMovement(0.2f));
+        animator.SetBool("IsJumping", false);
+    }
+
+    private IEnumerator DisableDamage(float seconds)
+    {
+        canTakeDamage = false;
+        yield return new WaitForSecondsRealtime(seconds);
+        canTakeDamage = true;
     }
 
     private IEnumerator DisableMovement(float seconds)
@@ -174,5 +195,22 @@ public class Movement : MonoBehaviour
         onButton = (collision.gameObject.name == "Butt" ||
             collision.gameObject.name == "ButtSquare")
             && !exit;
+    }
+
+    public void Restart(Vector2 pos)
+    {
+        Rb.velocity = Vector3.zero;
+        Rb.angularVelocity = 0;
+        Rb.position = pos;
+        justReset = true;
+        Rb.Sleep();
+        StartCoroutine(WakeUp(.5f));
+    }
+
+    private IEnumerator WakeUp(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        Rb.WakeUp();
+        justReset = false;
     }
 }

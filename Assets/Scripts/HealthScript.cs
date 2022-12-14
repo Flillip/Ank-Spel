@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,26 +7,38 @@ using UnityEngine.UI;
 public class HealthScript : MonoBehaviour
 {
     [SerializeField] Image[] Hearts;
+    [SerializeField] Transform[] SpawnPoints;
     [SerializeField] Sprite HealthFull;
     [SerializeField] Sprite HealthEmpty;
 
-    private int health;
+    public int Health { get; private set; }
+    private int spawnPointIndex;
+
+    public void ChangeSpawnPointIndex()
+    {
+        spawnPointIndex++;
+    }
 
     private void Start()
     {
-        health = Hearts.Length;
+        Health = Hearts.Length;
+        spawnPointIndex = 0;
     }
 
     public void Damage(int damage)
     {
-        health -= damage;
+        Health -= damage;
 
-        if (health <= 0)
-            Debug.Log("YOU DEAD");
+        if (Health <= 0)
+        {
+            RestartObjects("Coffin");
+            RestartObjects("Box");
+            GetComponent<Movement>().Restart(SpawnPoints[spawnPointIndex].position);
+        }
 
         for (int i = 0; i < Hearts.Length; i++)
         {
-            if (i >= health)
+            if (i >= Health)
             {
                 Hearts[i].sprite = HealthEmpty;
             }
@@ -35,5 +48,12 @@ public class HealthScript : MonoBehaviour
                 Hearts[i].sprite = HealthFull;
             }
         }
+    }
+
+    private void RestartObjects(string tag)
+    {
+        GameObject[] gameObjects = GameObject.FindGameObjectsWithTag(tag);
+        foreach (GameObject gameObject in gameObjects)
+            gameObject.GetComponent<IRestartable>().Restart();
     }
 }
