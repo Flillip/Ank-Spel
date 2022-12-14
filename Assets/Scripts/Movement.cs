@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Movement : MonoBehaviour
 {
@@ -15,6 +16,8 @@ public class Movement : MonoBehaviour
     [SerializeField] Camera Camera;
     [SerializeField] float CameraMovementOffset;
     [SerializeField] float PlayerMovementOffsetOnCameraMove = 2;
+    [SerializeField] HealthScript Health;
+    [SerializeField] float KnockbackForce;
 
     private bool doubleJump;
     private Animator animator;
@@ -25,6 +28,7 @@ public class Movement : MonoBehaviour
     private float halfWidth;
     private bool onButton;
     private bool canMoveCamera;
+    private bool canMove;
 
     private void Start()
     {
@@ -33,6 +37,7 @@ public class Movement : MonoBehaviour
         onButton = false;
         animator.SetBool("IsJumping", true);
         canMoveCamera = true;
+        canMove = true;
     }
 
 
@@ -72,7 +77,8 @@ public class Movement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Rb.velocity = new Vector2(horizontal * speed, Rb.velocity.y);
+        if(canMove)
+            Rb.velocity = new Vector2(horizontal * speed, Rb.velocity.y);
     }
 
     private bool IsGrounded()
@@ -95,6 +101,27 @@ public class Movement : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         FixButton(collision);
+
+        if (collision.gameObject.name == "Mumie")
+        {
+            Health.Damage(1);
+            ApplyKnockback(collision);
+        }
+    }
+
+    private void ApplyKnockback(Collision2D collision)
+    {
+        Vector2 dif = transform.position - collision.transform.position;
+        Vector2 knockback = dif.normalized * KnockbackForce;
+        Rb.AddForce(knockback, ForceMode2D.Impulse);
+        StartCoroutine(DisableMovement(0.2f));
+    }
+
+    private IEnumerator DisableMovement(float seconds)
+    {
+        canMove = false;
+        yield return new WaitForSeconds(seconds);
+        canMove = true;
     }
 
     private void OnCollisionStay2D(Collision2D collision)
