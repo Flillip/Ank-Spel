@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -8,7 +9,7 @@ public class Movement : MonoBehaviour
     [SerializeField] LayerMask GroundLayer;
     [SerializeField] bool CanDoubleJump = true;
     [SerializeField] Camera Camera;
-    [SerializeField] float CameraMovementOffset;
+    [SerializeField] Vector2 CameraMovementOffset;
     [SerializeField] float PlayerMovementOffsetOnCameraMove = 2;
     [SerializeField] HealthScript Health;
     [SerializeField] float KnockbackForce;
@@ -163,19 +164,35 @@ public class Movement : MonoBehaviour
             animator.SetBool("IsSwimming", true);
         }
 
+        HandleCamera(collision);
+    }
 
+    private void HandleCamera(Collider2D collision)
+    {
         if (canMoveCamera)
         {
             if (collision.gameObject.name == "CameraColliderLeft")
             {
-                Camera.transform.position += new Vector3(-CameraMovementOffset, 0);
-                transform.position += new Vector3(-2, 0);
+                Camera.transform.position += new Vector3(-CameraMovementOffset.x, 0);
+                transform.position += new Vector3(-PlayerMovementOffsetOnCameraMove, 0);
             }
-            
+
             else if (collision.gameObject.name == "CameraColliderRight")
             {
                 transform.position += new Vector3(PlayerMovementOffsetOnCameraMove, 0);
-                Camera.transform.position += new Vector3(CameraMovementOffset, 0);
+                Camera.transform.position += new Vector3(CameraMovementOffset.x, 0);
+            }
+
+            else if (collision.gameObject.name == "CameraColliderBottom")
+            {
+                Camera.transform.position += new Vector3(0, -CameraMovementOffset.y);
+                transform.position += new Vector3(0, -PlayerMovementOffsetOnCameraMove);
+            }
+
+            else if (collision.gameObject.name == "CameraColliderTop")
+            {
+                transform.position += new Vector3(0, PlayerMovementOffsetOnCameraMove);
+                Camera.transform.position += new Vector3(0, CameraMovementOffset.y);
             }
 
             canMoveCamera = false;

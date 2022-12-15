@@ -28,6 +28,7 @@ public class ButtonScript : MonoBehaviour
 
         originalParent = collision.transform.parent;
         collision.transform.parent = transform;
+        StopAllCoroutines();
         StartCoroutine(Move());
     }
 
