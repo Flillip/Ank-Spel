@@ -34,6 +34,7 @@ public class HealthScript : MonoBehaviour
             RestartObjects("Coffin");
             RestartObjects("Box");
             GetComponent<Movement>().Restart(SpawnPoints[spawnPointIndex].position);
+            Health = Hearts.Length;
         }
 
         for (int i = 0; i < Hearts.Length; i++)
