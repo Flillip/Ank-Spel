@@ -14,6 +14,8 @@ public class ButtonScript : MonoBehaviour
     private Vector3 originalPos;
     private Transform originalParent;
     private bool stillPressed;
+    private bool currentlyMoving;
+    private IEnumerator movingUpEnumerator;
 
     private void Start()
     {
@@ -29,7 +31,8 @@ public class ButtonScript : MonoBehaviour
         originalParent = collision.transform.parent;
         collision.transform.parent = transform;
         StopAllCoroutines();
-        StartCoroutine(Move());
+        movingUpEnumerator = Move();
+        StartCoroutine(movingUpEnumerator);
     }
 
     private IEnumerator Move()
@@ -38,14 +41,18 @@ public class ButtonScript : MonoBehaviour
 
         if (stillPressed)
         {
+            currentlyMoving = true;
             while (transform.localPosition.y > MaxPos)
             {
+                Debug.Log("MOVING UP");
                 transform.localPosition -= new Vector3(0, MoveSpeed * Time.deltaTime, 0);
                 yield return null;
             }
 
             OnPressed?.Invoke();
         }
+
+        currentlyMoving = false;
     }
 
     private void OnCollisionStay2D(Collision2D collision)
@@ -61,6 +68,7 @@ public class ButtonScript : MonoBehaviour
         if (collision.gameObject.tag != "Player" && collision.gameObject.tag != "Box")
             return;
 
+        Debug.Log("PLAYER EXITED");
         stillPressed = false;
         StartCoroutine(MoveBack());
         collision.transform.parent = originalParent;
@@ -68,12 +76,24 @@ public class ButtonScript : MonoBehaviour
 
     private IEnumerator MoveBack()
     {
+        yield return new WaitForSeconds(0.1f);
+
+        if (stillPressed)
+            yield break;
+
+        StopCoroutine(movingUpEnumerator);
+
+
+        currentlyMoving = true;
+        Debug.Log(transform.position.y < originalPos.y);
         while (transform.position.y < originalPos.y)
         {
+            Debug.Log("MOVING UP AGAIN");
             transform.localPosition += new Vector3(0, MoveSpeed * Time.deltaTime, 0);
             yield return null;
         }
 
         OnUnPressed?.Invoke();
+        currentlyMoving = false;
     }
 }

@@ -111,7 +111,6 @@ public class Movement : MonoBehaviour
 
         if (collision.gameObject.name == "Mumie" || collision.gameObject.name == "Spikes")
         {
-            Debug.Log("OUCHIE WOUCHIE THAT HURTS" + canTakeDamage);
             Health.Damage(1);
             if (Health.Health <= 0)
                 return;
