@@ -16,8 +16,7 @@ public class ShooterScript : MonoBehaviour
             return;
 
         shouldShoot = true;
-        if (!alreadyShooting)
-            StartCoroutine(Shoot());
+        StartCoroutine(Shoot());
     }
 
     private void OnTriggerStay2D(Collider2D collision)
@@ -34,20 +33,13 @@ public class ShooterScript : MonoBehaviour
             return;
 
         shouldShoot = false;
-        StopAllCoroutines();
-        StartCoroutine(Stop());
-    }
-
-    private IEnumerator Stop()
-    {
-        yield return new WaitForSeconds(0.1f);
-
-        if (!shouldShoot)
-            alreadyShooting = false;
     }
 
     private IEnumerator Shoot()
     {
+        if (alreadyShooting)
+            yield break;
+
         alreadyShooting = true;
         while (shouldShoot)
         {
@@ -55,5 +47,7 @@ public class ShooterScript : MonoBehaviour
 
             yield return new WaitForSeconds(ShootDelay);
         }
+
+        alreadyShooting = false;
     }
 }
