@@ -7,6 +7,7 @@ public class Movement : MonoBehaviour
     [SerializeField] Rigidbody2D Rb;
     [SerializeField] Transform GroundCheck;
     [SerializeField] LayerMask GroundLayer;
+    [SerializeField] LayerMask PlatformLayer;
     [SerializeField] bool CanDoubleJump = true;
     [SerializeField] Camera Camera;
     [SerializeField] Vector2 CameraMovementOffset;
@@ -47,7 +48,7 @@ public class Movement : MonoBehaviour
         horizontal = Input.GetAxisRaw("Horizontal");
         animator.SetFloat("Speed", Mathf.Abs(horizontal));
 
-        bool grounded = IsGrounded();
+        bool grounded = IsGrounded(GroundLayer) || IsGrounded(PlatformLayer);
 
         if ((grounded || onButton) && !Input.GetButton("Jump"))
         {
@@ -86,10 +87,10 @@ public class Movement : MonoBehaviour
         }
     }
 
-    private bool IsGrounded()
+    private bool IsGrounded(int layer)
     {
-        return Physics2D.Raycast(GroundCheck.position - new Vector3(halfWidth - .2f, 0), Vector2.down, transform.localScale.y / 8f, GroundLayer) ||
-            Physics2D.Raycast(GroundCheck.position + new Vector3(halfWidth - .2f, 0), Vector2.down, transform.localScale.y / 8f, GroundLayer);
+        return Physics2D.Raycast(GroundCheck.position - new Vector3(halfWidth - .2f, 0), Vector2.down, transform.localScale.y / 8f, layer) ||
+            Physics2D.Raycast(GroundCheck.position + new Vector3(halfWidth - .2f, 0), Vector2.down, transform.localScale.y / 8f, layer);
     }
 
     private void Flip()

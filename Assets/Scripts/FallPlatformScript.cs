@@ -9,6 +9,12 @@ public class FallPlatformScript : MonoBehaviour
 
     [SerializeField] private Rigidbody2D rb;
 
+    private void Start()
+    {
+        BoxCollider2D trigger = GetComponents<BoxCollider2D>()[1];
+        trigger.size = new Vector2(GetComponent<SpriteRenderer>().size.x, trigger.size.y);
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))

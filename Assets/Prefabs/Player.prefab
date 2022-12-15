@@ -568,12 +568,16 @@ MonoBehaviour:
   GroundLayer:
     serializedVersion: 2
     m_Bits: 8
+  PlatformLayer:
+    serializedVersion: 2
+    m_Bits: 128
   CanDoubleJump: 1
   Camera: {fileID: 0}
   CameraMovementOffset: {x: 35.5, y: 20}
   PlayerMovementOffsetOnCameraMove: 2
   Health: {fileID: 2373339983599385907}
   KnockbackForce: 16
+  speed: 8
 --- !u!114 &2373339983599385907
 MonoBehaviour:
   m_ObjectHideFlags: 0
