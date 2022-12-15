@@ -44,7 +44,6 @@ public class ButtonScript : MonoBehaviour
             currentlyMoving = true;
             while (transform.localPosition.y > MaxPos)
             {
-                Debug.Log("MOVING UP");
                 transform.localPosition -= new Vector3(0, MoveSpeed * Time.deltaTime, 0);
                 yield return null;
             }
@@ -68,7 +67,6 @@ public class ButtonScript : MonoBehaviour
         if (collision.gameObject.tag != "Player" && collision.gameObject.tag != "Box")
             return;
 
-        Debug.Log("PLAYER EXITED");
         stillPressed = false;
         StartCoroutine(MoveBack());
         collision.transform.parent = originalParent;
@@ -85,10 +83,8 @@ public class ButtonScript : MonoBehaviour
 
 
         currentlyMoving = true;
-        Debug.Log(transform.position.y < originalPos.y);
         while (transform.position.y < originalPos.y)
         {
-            Debug.Log("MOVING UP AGAIN");
             transform.localPosition += new Vector3(0, MoveSpeed * Time.deltaTime, 0);
             yield return null;
         }

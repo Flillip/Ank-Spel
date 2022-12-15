@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Box
   - Coffin
+  - Arrow
   layers:
   - Default
   - TransparentFX

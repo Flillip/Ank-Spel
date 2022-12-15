@@ -110,7 +110,8 @@ public class Movement : MonoBehaviour
         if (!canTakeDamage)
             return;
 
-        if (collision.gameObject.name == "Mumie" || collision.gameObject.name == "Spikes")
+        if (collision.gameObject.name == "Mumie" || collision.gameObject.name == "Spikes" ||
+            collision.gameObject.tag == "Arrow")
         {
             Health.Damage(1);
             if (Health.Health <= 0)
