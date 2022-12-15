@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class JumpPadScript : MonoBehaviour
 {
-    private float bounce = 25f;
+    private float bounce = 20f;
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
