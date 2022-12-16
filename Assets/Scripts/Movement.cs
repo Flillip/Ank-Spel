@@ -228,6 +228,7 @@ public class Movement : MonoBehaviour
         justReset = true;
         Rb.Sleep();
         StartCoroutine(WakeUp(.5f));
+        Camera.transform.position = new Vector3(142, -20, Camera.transform.position.z);
     }
 
     private IEnumerator WakeUp(float seconds)
