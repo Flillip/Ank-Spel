@@ -7,6 +7,9 @@ TagManager:
   - Box
   - Coffin
   - Arrow
+  - Spikes
+  - Mumie
+  - Shooter
   layers:
   - Default
   - TransparentFX

@@ -12,7 +12,7 @@ public class ShooterScript : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.name != "Player")
+        if (!collision.gameObject.CompareTag("Player"))
             return;
 
         shouldShoot = true;
@@ -21,7 +21,7 @@ public class ShooterScript : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.gameObject.name != "Player")
+        if (!collision.gameObject.CompareTag("Player"))
             return;
 
         shouldShoot = true;
@@ -29,7 +29,7 @@ public class ShooterScript : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.name != "Player")
+        if (!collision.gameObject.CompareTag("Player"))
             return;
 
         shouldShoot = false;

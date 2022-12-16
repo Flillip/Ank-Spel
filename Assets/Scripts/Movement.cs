@@ -111,8 +111,8 @@ public class Movement : MonoBehaviour
         if (!canTakeDamage)
             return;
 
-        if (collision.gameObject.name == "Mumie" || collision.gameObject.name == "Spikes" ||
-            collision.gameObject.tag == "Arrow")
+        if (collision.gameObject.CompareTag("Mumie") || collision.gameObject.CompareTag("Spikes") ||
+            collision.gameObject.CompareTag("Arrow"))
         {
             Health.Damage(1);
             if (Health.Health <= 0)
@@ -160,7 +160,7 @@ public class Movement : MonoBehaviour
     
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.name == "Water")
+        if (collision.gameObject.name != "Water")
         {
             animator.SetBool("IsJumping", false);
             animator.SetBool("IsSwimming", true);
@@ -203,7 +203,7 @@ public class Movement : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.name == "Water")
+        if (collision.gameObject.name != "Water")
         {
             animator.SetBool("IsSwimming", false);
         }
