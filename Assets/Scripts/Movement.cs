@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Movement : MonoBehaviour
 {
@@ -44,6 +45,9 @@ public class Movement : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.R))
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
         canMoveCamera = true;
         horizontal = Input.GetAxisRaw("Horizontal");
         animator.SetFloat("Speed", Mathf.Abs(horizontal));
@@ -160,7 +164,7 @@ public class Movement : MonoBehaviour
     
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.name != "Water")
+        if (collision.gameObject.name == "Water")
         {
             animator.SetBool("IsJumping", false);
             animator.SetBool("IsSwimming", true);
@@ -203,7 +207,7 @@ public class Movement : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.name != "Water")
+        if (collision.gameObject.name == "Water")
         {
             animator.SetBool("IsSwimming", false);
         }

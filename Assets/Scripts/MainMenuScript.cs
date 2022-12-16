@@ -9,4 +9,15 @@ public class MainMenuScript : MonoBehaviour
     {
         SceneManager.LoadScene("Part-1");
     }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        SceneManager.LoadScene("Win");
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+            ChangeToPart1();
+    }
 }
