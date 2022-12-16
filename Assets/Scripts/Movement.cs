@@ -116,7 +116,7 @@ public class Movement : MonoBehaviour
             return;
 
         if (collision.gameObject.CompareTag("Mumie") || collision.gameObject.CompareTag("Spikes") ||
-            collision.gameObject.CompareTag("Arrow"))
+            collision.gameObject.CompareTag("Arrow") || collision.gameObject.CompareTag("Ghost"))
         {
             Health.Damage(1);
             if (Health.Health <= 0)
