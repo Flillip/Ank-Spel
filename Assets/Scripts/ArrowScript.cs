@@ -21,7 +21,7 @@ public class ArrowScript : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Shooter"))
+        if (!collision.gameObject.CompareTag("Shooter"))
             Destroy(this.gameObject);
     }
 }
